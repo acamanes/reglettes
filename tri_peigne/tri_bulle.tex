@@ -1,0 +1,61 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[frenchb]{babel}
+\usepackage[a4paper, landscape, margin=0.5cm]{geometry}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+        \node[shape=circle,draw,minimum size=5mm, inner sep=1pt,fill=white] (char)
+        {\rule[-0.5pt]{-2.6pt}{\dimexpr2ex+0pt}#1};}}
+
+
+\newcommand{\trianglet}[2]
+{\begin{scope}[xshift=#1,yshift=#2,scale=1.1]\draw[fill=black] (-1/4,0) -- (1/4,0) -- (0, {sqrt(3)/4}) -- cycle;\end{scope}}
+
+\newcommand{\carret}[2]
+{\begin{scope}[xshift=#1,yshift=#2,scale=1.1]\draw[rotate=0,fill=black] (-1/4,0) -- (1/4,0) -- (1/4, 1/2) -- (-1/4,1/2) -- cycle;\end{scope}}
+
+
+\begin{document}
+
+
+\vfill
+
+\begin{center}
+  {\Huge\bf
+    Nombre d'échanges par parcours de ligne
+    }
+
+\vfill
+    
+\begin{tikzpicture}[scale=0.9]
+
+\draw (1.5,16) node{{\LARGE\bf Cartes}};
+\draw (30,16) node{{\LARGE\bf Total}};
+  
+% Construction des separateurs verticaux
+\draw[thick] (0,-1) -- (0,17);
+\foreach \i in {2,...,16} {
+\draw[thick] (2*\i-1,-1) -- (2*\i-1,17);
+};
+
+% Construction des separateurs horizontaux
+\foreach \i in {0,...,9} {
+\draw[thick] (0,2*\i-1) -- (31,2*\i-1);
+};
+
+% Construction des carres et fleches gauches
+\foreach \i in {3,5,7,9,11,13} {
+\carret{4+2*\i cm}{15.75cm};
+};
+
+% Construction des triangles et fleches droites
+\foreach \i in {2,4,6,8,10,12,14} {
+\trianglet{4+2*\i cm}{15.75 cm};
+};
+\end{tikzpicture}
+\end{center}
+\end{document}

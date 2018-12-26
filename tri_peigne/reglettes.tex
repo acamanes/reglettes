@@ -1,0 +1,28 @@
+\documentclass[landscape]{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[frenchb]{babel}
+\usepackage[a4paper,margin=30pt]{geometry}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{multirow} % Complement pour tableaux
+\usepackage{array}
+\pagestyle{empty}
+\usepackage{ifthen}
+\usepackage{calc}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{center}
+\begin{tikzpicture}
+\foreach \i in {1,...,10}{
+\draw (2.5*\i-3,0) rectangle (2.5*\i-1.5,1.5*\i);
+}
+\end{tikzpicture}
+\end{center}
+\end{document}
+
