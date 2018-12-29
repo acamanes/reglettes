@@ -56,31 +56,31 @@ function initialize(n) {
 /* Get, Read and evaluate program */
 /* Get the content of the code*/
 
-function parse(str){
-    var strarray = str.split("(");
-    var f = strarray[0];
-    if (strarray.length > 1) {
+function transform(chaine){
+    if (chaine.includes("(")) {
+	var strarray = chaine.split("(");
+	var f = strarray[0];
 	var argts = (strarray[1].split(")")[0]).split(",");
 	return [f, argts];
-    }
-    else {return f};
+	}
+	else {return [chaine]};
 }
 
 function test(){
     var code = document.getElementById("code").value;
     var codearray = code.split('\n');
     for (var i=0;i<codearray.length;i++){
-	var val = parse(codearray[i]);
+	var val = transform(codearray[i]);
 	if (val[0] == "initialize"){
 	    var reg = initialize(parseInt(val[1]));
 	}
-	else if (codearray[i] == "shuffle"){
+	else if (val[0] == "shuffle"){
 	    shuffle(reg);
 	}
-	else if (codearray[i] == "tripair"){
+	else if (val[0] == "tripair"){
 	    partial_sort(reg,0);
 	}
-	else if (codearray[i] == "triimpair"){
+	else if (val[0] == "triimpair"){
 	    partial_sort(reg,1);
 	}
     }
