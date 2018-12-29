@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Atelier de tri</title>
+    <title style="text-align:center">Atelier de tri</title>
     <meta charset="utf-8" />
   </head>
   
@@ -11,12 +11,20 @@
     <div>
       <h1 id="page-title">Trier des réglettes</h1>
     </div>
-    <button onclick="recommence();">Initialise</button>
-    <button onclick="tripair();">Tri pair</button>
-    <button onclick="triimpair();">Tri impair</button>    
-    <canvas id="reglettes" width="500" height="500"></canvas>
+    <table style="width:100%, text-align:center">
+      <tr>
+	<td>
+	  <canvas id="reglettes" width="500" height="500"></canvas>
+	</td>
+	<td>
+	  <textarea id="code" rows="10" placeholder="Write your code...">
+	  </textarea>
+	  </br>
+	  <button onclick="test();">Évaluer</button>
+	</td>
+      </tr>
+      <tr><td style="text-align:center" colspan="2"> Commandes autorisées </td></tr>
+    </table>
     <script src="scripts/drawing.js"></script>
-    
-    
   </body>
 </html>

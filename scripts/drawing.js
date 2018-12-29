@@ -1,3 +1,5 @@
+/* Drawing and sorting reglettes */
+
 var canvas = document.getElementById("reglettes");
 var context = canvas.getContext("2d");
 
@@ -42,19 +44,36 @@ function partial_sort(a,j) {
 /* Initialize the sorted array */
 function initialize(n) {
     var reg = [];
-    for (i=1; i<=number; i++){
+    for (i=1; i<=n; i++){
 	reg.push(i);
     }
     shuffle(reg);
+    draw(reg, 100);
     return reg
 }
 
-/* Number of reglettes */
-var number = 10;
 
-/* Array of reglettes */
-var reg = initialize(number);
+/* Get, Read and evaluate program */
+/* Get the content of the code*/
 
-function recommence() {shuffle(reg);draw(reg,100);}
-function tripair() {partial_sort(reg,0);}
-function triimpair() {partial_sort(reg,1);}
+function test(){
+    var code = document.getElementById("code").value;
+    var codearray = code.split('\n');
+    for (var i=0;i<codearray.length;i++){
+	if (codearray[i] == "initialize"){
+	    var reg = initialize(10);
+	}
+	else if (codearray[i] == "shuffle"){
+	    shuffle(reg);
+	}
+	else if (codearray[i] == "tripair"){
+	    partial_sort(reg,0);
+	}
+	else if (codearray[i] == "triimpair"){
+	    partial_sort(reg,1);
+	}
+    }
+}
+
+
+ 
