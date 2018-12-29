@@ -56,12 +56,23 @@ function initialize(n) {
 /* Get, Read and evaluate program */
 /* Get the content of the code*/
 
+function parse(str){
+    var strarray = str.split("(");
+    var f = strarray[0];
+    if (strarray.length > 1) {
+	var argts = (strarray[1].split(")")[0]).split(",");
+	return [f, argts];
+    }
+    else {return f};
+}
+
 function test(){
     var code = document.getElementById("code").value;
     var codearray = code.split('\n');
     for (var i=0;i<codearray.length;i++){
-	if (codearray[i] == "initialize"){
-	    var reg = initialize(10);
+	var val = parse(codearray[i]);
+	if (val[0] == "initialize"){
+	    var reg = initialize(parseInt(val[1]));
 	}
 	else if (codearray[i] == "shuffle"){
 	    shuffle(reg);
