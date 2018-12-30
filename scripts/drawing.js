@@ -4,10 +4,10 @@ var canvas = document.getElementById("reglettes");
 var context = canvas.getContext("2d");
 
 /* Draw the array of reglettes */
-function draw(a, y) {
+function draw(a, l, y) {
     // context.clearRect(0,0,canvas.width,canvas.height);
     for (var i=0; i < a.length; i++) {
-	context.fillRect(25*i, y, 12, -a[i]*10);
+	context.fillRect(25*i+l, y, 12, -a[i]*10);
     }
 }
 
@@ -76,23 +76,23 @@ function test(){
 	    var reg = initialize(parseInt(val[1]));
 	    var h = 10 * (parseInt(val[1]) + 10);
 	    var l = 25 * parseInt(val[1]) + 10;
-	    draw(reg, h*(i+1));
-	    context.fillText(codearray[i],l+10 , h*(i+1));
+	    draw(reg, l, h*(i+1));
+	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
 	else if (val[0] == "shuffle"){
 	    shuffle(reg);
-	    draw(reg, h*(i+1));
-	    context.fillText(codearray[i],l+10 , h*(i+1));
+	    draw(reg, l, h*(i+1));
+	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
 	else if (val[0] == "tripair"){
 	    partial_sort(reg,0);
-	    draw(reg, h*(i+1));
-	    context.fillText(codearray[i],l+10 , h*(i+1));
+	    draw(reg, l, h*(i+1));
+	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
 	else if (val[0] == "triimpair"){
 	    partial_sort(reg,1);
-	    draw(reg, h*(i+1));
-	    context.fillText(codearray[i],l+10 , h*(i+1));
+	    draw(reg, l, h*(i+1));
+	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
     }
 }
