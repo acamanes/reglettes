@@ -5,7 +5,7 @@ var context = canvas.getContext("2d");
 
 /* Draw the array of reglettes */
 function draw(a, y) {
-    context.clearRect(0,0,canvas.width,canvas.height);
+    // context.clearRect(0,0,canvas.width,canvas.height);
     for (var i=0; i < a.length; i++) {
 	context.fillRect(25*i, y, 12, -a[i]*10);
     }
@@ -38,17 +38,14 @@ function partial_sort(a,j) {
 	}
 	i = i + 2;
     }
-    draw(a,100+j*10);
 }
 
 /* Initialize the sorted array */
 function initialize(n) {
     var reg = [];
     for (i=1; i<=n; i++){
-	reg.push(i);
+	reg.push(n-i+1);
     }
-    shuffle(reg);
-    draw(reg, 100);
     return reg
 }
 
@@ -56,35 +53,46 @@ function initialize(n) {
 /* Get, Read and evaluate program */
 /* Get the content of the code*/
 
-function transform(chaine){
-    if (chaine.includes("(")) {
-	var strarray = chaine.split("(");
+function parse(str){
+    if (str.includes("(")) {
+	var strarray = str.split("(");
 	var f = strarray[0];
 	var argts = (strarray[1].split(")")[0]).split(",");
 	return [f, argts];
 	}
-	else {return [chaine]};
+	else {return [str]};
 }
 
+
+
 function test(){
+    context.clearRect(0,0,canvas.width,canvas.height);
     var code = document.getElementById("code").value;
     var codearray = code.split('\n');
+    var i = 0;
     for (var i=0;i<codearray.length;i++){
-	var val = transform(codearray[i]);
+	var val = parse(codearray[i]);
 	if (val[0] == "initialize"){
 	    var reg = initialize(parseInt(val[1]));
+	    var h = 10 * (parseInt(val[1]) + 10);
+	    var l = 25 * parseInt(val[1]) + 10;
+	    draw(reg, h*(i+1));
+	    context.fillText(codearray[i],l+10 , h*(i+1));
 	}
 	else if (val[0] == "shuffle"){
 	    shuffle(reg);
+	    draw(reg, h*(i+1));
+	    context.fillText(codearray[i],l+10 , h*(i+1));
 	}
 	else if (val[0] == "tripair"){
 	    partial_sort(reg,0);
+	    draw(reg, h*(i+1));
+	    context.fillText(codearray[i],l+10 , h*(i+1));
 	}
 	else if (val[0] == "triimpair"){
 	    partial_sort(reg,1);
+	    draw(reg, h*(i+1));
+	    context.fillText(codearray[i],l+10 , h*(i+1));
 	}
     }
 }
-
-
- 
