@@ -9,21 +9,30 @@
   <body>
     
     <div>
-      <h1 id="page-title">Trier des réglettes</h1>
+      <h1 style="text-align:center" id="page-title">Trier des réglettes</h1>
     </div>
     <table style="width:100%, text-align:center">
       <tr>
-	<td>
-	  <canvas id="reglettes" width="500" height="500"></canvas>
-	</td>
-	<td>
-	  <textarea id="code" rows="10" placeholder="Write your code...">
+	<td style="width:50%">
+	  Commandes autorisées
+	  <br/>
+	  initialize(??) : Crée ?? réglettes triées par ordre décroissant de taille.
+	  <br/>
+	  shuffle : Mélange les réglettes.
+	  <br/>
+	  sort_even : Ordonne les réglettes dont la position est paire avec leur voisine de droite.
+	  <br/>
+	  sort_odd : Ordonne les réglettes dont la position est impaire avec leur voisine de droite.
+	  <br/>
+	  <textarea id="code" rows="20" placeholder="Write your code...">
 	  </textarea>
 	  </br>
-	  <button onclick="test();">Évaluer</button>
+	  <button onclick="execute();">Évaluer</button>
+	</td>
+	<td style="padding-left:100px">
+	  <canvas id="reglettes" width="100" height="1000"></canvas>
 	</td>
       </tr>
-      <tr><td style="text-align:center" colspan="2"> Commandes autorisées </td></tr>
     </table>
     <script src="scripts/drawing.js"></script>
   </body>

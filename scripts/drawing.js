@@ -64,35 +64,39 @@ function parse(str){
 }
 
 
+// function clean(code){
+    // code = code.replace(,);
+// }
 
-function test(){
-    context.clearRect(0,0,canvas.width,canvas.height);
-    var code = document.getElementById("code").value;
+function eval(code){
     var codearray = code.split('\n');
     var i = 0;
     for (var i=0;i<codearray.length;i++){
 	var val = parse(codearray[i]);
 	if (val[0] == "initialize"){
-	    var reg = initialize(parseInt(val[1]));
-	    var h = 10 * (parseInt(val[1]) + 10);
-	    var l = 25 * parseInt(val[1]) + 10;
-	    draw(reg, l, h*(i+1));
-	    context.fillText(codearray[i],0 , h*(i+0.6));
+	    var number = parseInt(val[1])
+	    var reg = initialize(number);
+	    var h = 10 * (number + 10);
+	    var l = 100;
+	    context.canvas.width = number * 30 + 100;
+	    context.canvas.height = 10 * (number + 10) * codearray.length;
 	}
 	else if (val[0] == "shuffle"){
 	    shuffle(reg);
-	    draw(reg, l, h*(i+1));
-	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
-	else if (val[0] == "tripair"){
+	else if (val[0] == "sort_even"){
 	    partial_sort(reg,0);
-	    draw(reg, l, h*(i+1));
-	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
-	else if (val[0] == "triimpair"){
+	else if (val[0] == "sort_odd"){
 	    partial_sort(reg,1);
-	    draw(reg, l, h*(i+1));
-	    context.fillText(codearray[i],0 , h*(i+0.6));
 	}
+	draw(reg, l, h*(i+1));
+	context.fillText(codearray[i],0 , h*(i+0.6));
     }
+}
+
+function execute(){
+    context.clearRect(0,0,canvas.width,canvas.height);
+    var code = document.getElementById("code").value;
+    eval(code);
 }
