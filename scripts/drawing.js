@@ -68,7 +68,7 @@ function codetoinstructions(code){
     codearray = code.split("\n");
     /* Liste d instructions */
     var listeinstr = [];
-    var i = 0
+    var i = 0; var cpt = 0;
     while (i < codearray.length){
 	var str = codearray[i];
 	/* Fonctions avec argument */
@@ -77,10 +77,12 @@ function codetoinstructions(code){
 	    var f = strarray[0];
 	    var argts = (strarray[1].split(")")[0]).split(",");
 	    listeinstr.push(["f", f, argts]);
+	    cpt++;
 	}
 	// Instruction
 	else if (str.match(instructions) != null){
 	    listeinstr.push(["i", str]);
+	    cpt++;
 	}
 	/* Loop */
 	else if (str.includes("Repeat")) {
@@ -92,14 +94,15 @@ function codetoinstructions(code){
 		}
 	    }
 	    var codeloop = ((codearray.slice(i+2,j-1)).toString()).replace(/,/g,"\n");
-	    instrloop = codetoinstructions(codeloop)
+	    instrloop = codetoinstructions(codeloop)[1]
 	    listeinstr.push(["r", num, instrloop]);
 	    var i = j;
+	    cpt = cpt + instrloop.length*num;
 	}
 	/* Faute de frappe : Exception */
 	i++
     }
-    return listeinstr;
+    return [cpt, listeinstr];
 }
 
 function eval_simple(todo, a) {
@@ -113,23 +116,32 @@ function eval_simple(todo, a) {
 	else if (todo[0] == "f") {
 	    if (todo[1] == "initialize") {
 		var number = parseInt(todo[2][0]);
-		var h = 10 * (number + 10);
-		var l = 100;
-		context.canvas.width = number * 30 + 100;
-		context.canvas.height = 10 * (number + 10) * codearray.length;
 		var reg = initialize(number);
 	    }
 	}
 }
 
 function eval(code,reg){
-    var listinstr = codetoinstructions(code);
+    var [l, listinstr] = codetoinstructions(code);
+    var cpt = 0;
     for (var i=0; i<listinstr.length;i++) {
 	var todo = listinstr[i]
 	if (todo[0] == "i") {
-	    if (todo[1]=="shuffle") {shuffle(reg);}
-	    else if (todo[1]=="sort_even") {partial_sort(reg, 0);}
-	    else if (todo[1]=="sort_odd") {partial_sort(reg, 1);}
+	    if (todo[1]=="shuffle")
+	    {shuffle(reg);
+	     draw(reg,100,h*(cpt+0.6));
+	     context.fillText(todo[1],0,h*(cpt+0.6));
+	     cpt++;}
+	    else if (todo[1]=="sort_even")
+	    {partial_sort(reg, 0);
+	     draw(reg,100,h*(cpt+0.6));
+	     context.fillText(todo[1],0,h*(cpt+0.6));
+	     cpt++;}
+	    else if (todo[1]=="sort_odd")
+	    {partial_sort(reg, 1);
+	     draw(reg,100,h*(cpt+0.6));
+	     context.fillText(todo[1],0,h*(cpt+0.6));
+	     cpt++;}
 	    /* Exception */
 	}
 	else if (todo[0] == "f") {
@@ -138,19 +150,24 @@ function eval(code,reg){
 		var h = 10 * (number + 10);
 		var l = 100;
 		context.canvas.width = number * 30 + 100;
-		context.canvas.height = 10 * (number + 10) * codearray.length;
+		context.canvas.height = 10 * (number + 10) * l;
 		var reg = initialize(number);
+		context.fillText("initialize",0,h*(cpt+0.6));
+		draw(reg, 100, h*(cpt+0.6));
+		cpt++;
 	    }
 	}
 	else if (todo[0] == "r") {
 	    for (j=0; j<todo[1];j++) {
 		for (var k=0; k<todo[2].length;k++) {
 		    eval_simple(todo[2][k], reg);
+		    context.fillText(todo[2][k],0,h*(cpt+0.6));
+		    draw(reg, 100, h*(cpt+0.6));
+		    cpt++;
 		}
 	    }
 	}
     }
-    draw(reg, 0, 150);
 }
 
 function execute(){
