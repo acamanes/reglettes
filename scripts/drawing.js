@@ -115,6 +115,7 @@ function eval_simple(todo, a) {
 	}
 	else if (todo[0] == "f") {
 	    if (todo[1] == "initialize") {
+		/* Exception */
 		var number = parseInt(todo[2][0]);
 		var reg = initialize(number);
 	    }
@@ -161,7 +162,7 @@ function eval(code,reg){
 	    for (j=0; j<todo[1];j++) {
 		for (var k=0; k<todo[2].length;k++) {
 		    eval_simple(todo[2][k], reg);
-		    context.fillText(todo[2][k],0,h*(cpt+0.6));
+		    context.fillText(todo[2][k][1],0,h*(cpt+0.6));
 		    draw(reg, 100, h*(cpt+0.6));
 		    cpt++;
 		}
