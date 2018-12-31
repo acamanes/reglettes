@@ -63,32 +63,70 @@ function parse(str){
 	else {return [str]};
 }
 
+var functions = "initialize"
+var instructions = /shuffle|sort_even|sort_odd/;
 
-// function clean(code){
-    // code = code.replace(,);
-// }
+function codetoinstructions(code){
+    /* Les { et } sont sur une ligne unique */
+    code = code.replace("(}|})/g","\n}\n");
+    /* Suppression des lignes vides */
+    code = code.replace("\n{2,}/g","\n");
+    /* Séparation des lignes */
+    codearray = code.split("\n");
+    /* Liste d instructions */
+    var listeinstr = [];
+    var i = 0;
+    while (i < codearray.length){
+	var str = codearray[i];
+	/* Fonctions avec argument */
+	if (str.includes("(")) {
+	    var strarray = str.split("(");
+	    var f = strarray[0];
+	    var argts = (strarray[1].split(")")[0]).split(",");
+	    listeinstr.push(["f", f, argts]);
+	}
+	/* Boucle */
+	else if (str.includes("Repeat")) {
+	    var num = str.split(" ")[1];
+	    var j = i + 1;
+	    if (codearray[j] == "{") {
+		while (codearray[j] != "}") {
+		    j++;
+		}
+	    }
+	    listeinstr.push(["r", num, codetoinstructions(code.substring(i,j))]);
+	    var i = j;
+	}
+	// Instruction
+	else if (str.match(instructions) != null){
+	    listeinstr.push(["i", str]);
+	}
+	/* Faute de frappe : Exception */
+	i++
+    }
+    return listeinstr;
+}
 
 function eval(code){
-    var codearray = code.split('\n');
-    var i = 0;
-    for (var i=0;i<codearray.length;i++){
-	var val = parse(codearray[i]);
-	if (val[0] == "initialize"){
-	    var number = parseInt(val[1])
-	    var reg = initialize(number);
-	    var h = 10 * (number + 10);
-	    var l = 100;
-	    context.canvas.width = number * 30 + 100;
-	    context.canvas.height = 10 * (number + 10) * codearray.length;
+    var listinstr = codetoinstructions(code);
+    for (var i =0; i<listinstr.length;i++) {
+	var todo = listinstr[i]
+	if (todo[0] == "i") {
+	    if (todo[1]=="shuffle") {
+		shuffle(reg);}
+	    else if (todo[1]=="sort_even") {partial_sort(reg, 0);}
+	    else if (todo[1]=="sort_odd") {partial_sort(reg, 1);}
+	    /* Exception */
 	}
-	else if (val[0] == "shuffle"){
-	    shuffle(reg);
-	}
-	else if (val[0] == "sort_even"){
-	    partial_sort(reg,0);
-	}
-	else if (val[0] == "sort_odd"){
-	    partial_sort(reg,1);
+	else if (todo[0] == "f") {
+	    if (todo[1] == "initialize") {
+		var number = parseInt(todo[2][0]);
+		var reg = initialize(number);
+		var h = 10 * (number + 10);
+		var l = 100;
+		context.canvas.width = number * 30 + 100;
+		context.canvas.height = 10 * (number + 10) * codearray.length;
+	    }
 	}
 	draw(reg, l, h*(i+1));
 	context.fillText(codearray[i],0 , h*(i+0.6));
