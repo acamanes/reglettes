@@ -160,40 +160,54 @@ function eval_simple(todo, a) {
 }
 
 /* Evaluates the code, given the total code and the array */
+/* Returns the list of modified arrays */
 function eval(code,reg){
     /* Gets the parsed code and the number of instructions */
+    var drawings = []
     var [lcode, listinstr] = codetoinstructions(code);
-    var cpt = 0;
     if (listinstr[0][1] != "initialize") {e_intialize() }
     else {
 	for (var i=0; i<listinstr.length;i++) {
 	    var todo = listinstr[i]
 	    if (todo[0] == "i") {
 		minstructions.get(todo[1])(reg);
-		draw_instruction(reg,todo[1],0,h*(cpt+0.6));
-		cpt++;
+		drawings.push({"instr":todo[1],"reg":reg.slice()});
 	    }
 	    else if (todo[0] == "f") {
 		if (todo[1] == "initialize") {
-		    var number = parseInt(todo[2][0]);
-		    var h = 10 * (number + 10);
-		    var l = 100;
-		    /* Modify canvas size */
-		    context.canvas.width = number * 30 + 100;
-		    context.canvas.height = 10 * (number + 10) * lcode;
-		    /* Creates the array */
-		    var reg = initialize(number);
-		    draw_instruction(reg, "initialize", 0, h*(cpt+0.6));
-		    cpt++;
+    		    /* Creates the array */
+		    var reg = initialize(todo[2]);
+		    drawings.push({"instr":todo[1],"reg":reg.slice()});
 		}
 	    }
 	    else if (todo[0] == "r") {
 		for (j=0; j<todo[1];j++) {
-		for (var k=0; k<todo[2].length;k++) {
-		    eval_simple(todo[2][k], reg);
-		    draw_instruction(reg, todo[2][k][1], 0, h*(cpt+0.6));
-		    cpt++;
-}}}}}}
+		    for (var k=0; k<todo[2].length;k++) {
+			eval_simple(todo[2][k], reg);
+			drawings.push({"instr":todo[2][k][1],"reg":reg.slice()});
+		    }}}}}
+    return drawings
+}
+
+/* Given the arrays modification history, modifies the canvas and print on it */
+function history(drawings) {
+    var number = (drawings[0].reg).length;
+    var lcode = drawings.length;
+    var h = 10 * (number + 10);
+    var l = 100;
+    /* Modify canvas size */
+    context.canvas.width = number * 30 + 100;
+    context.canvas.height = 10 * (number + 10) * lcode;
+    for (i=0;i<drawings.length;i++){
+	draw_instruction(drawings[i].reg,drawings[i].instr,0,h*(i+0.6));
+    }
+}
+
+
+function print (code) {
+    drawings = eval(code,[]);
+    history(drawings);
+}
 
 /* Button function to execute the code */
 function execute(){
@@ -202,5 +216,5 @@ function execute(){
     /* Get the code string */
     var code = document.getElementById("code").value;
     /* Evaluates */
-    eval(code,[]);
+    print(code);
 }
