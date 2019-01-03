@@ -118,7 +118,7 @@ function codetoinstructions(code){
 	    cpt++;
 	}
 	/* Detects and build loops */
-	else if (str.includes("Repeat")) {
+	else if (str.includes("repeat")) {
 	    var num = str.split(" ")[1];
 	    /* Detects the number of lines in the loop */
 	    var j = i + 1;
