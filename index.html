@@ -26,16 +26,18 @@
 	    <li>repeat ?? times {...} : Répète une série d'actions ?? fois.</li>
 	    <li>while exists_exchanges {...} : Répète une série d'actions ?? tant que des échanges ont été effectués dans la boucle.</li>
 	  </ul>
+	  <button onclick="execute();">Évaluer</button>
 	  <br/>
 	  <textarea id="code" rows="20" placeholder="Write your code..."></textarea>
-	  </br>
-	  <button onclick="execute();">Évaluer</button>
 	</td>
 	<td style="padding-left:100px">
+	  <canvas id="animation" width="100" height="1000">Votre animation ici</canvas>
+	  <br/>
 	  <canvas id="reglettes" width="100" height="1000"></canvas>
 	</td>
       </tr>
     </table>
+
     <script src="scripts/drawing.js"></script>
   </body>
 </html>

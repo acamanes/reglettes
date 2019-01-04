@@ -195,7 +195,7 @@ function eval(code, variables){
 	    if (todo[0] == "i") {
 		minstructions.get(todo[1])(variables);
 		var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"reg":reg.slice()});
+		drawings.push({"instr":todo[1],"reg":reg.slice(),"exch":variables.get("_lexch")});
 	    }
 	    /* Functions take arguments and context */
 	    else if (todo[0] == "f") {
@@ -250,22 +250,49 @@ function history(drawings, variables) {
     context.fillText("Nombre total d'échanges : "+variables.get("_gexch"),0,10);
 }
 
+function reganimate (drawings, variables){
+    var acanvas = variables.get("_canvasanimation");
+    var acontext = variables.get("_contextanimation");
+    var i = 0;
+    var max = drawings.length;
+    var id = setInterval(frame,1000);
+    var number = (drawings[0].reg).length;
+    acontext.canvas.width = number * 30 + 100;
+    acontext.canvas.height = number * 11;
+    // acontext.fillRect(0,10*number,12,-10*(number-1));
+    // acontext.fillRect(12,10*number,12,-10*(number));
+    function frame () {
+	if (i==max-1) {clearInterval(id)}
+	else {i++;
+	      acontext.clearRect(0,0,acanvas.width,acanvas.height);
+	      var a = drawings[i].reg;
+	      for (var j=0; j < a.length; j++) {
+		  acontext.fillRect(25*j+100, 10*number, 12, -a[j]*10);
+		  acontext.fillText(j, 25*j+4+100, 10*number+10);
+    }}}
+}
+
 function print (code, variables) {
     drawings = eval(code,variables);
     history(drawings, variables);
+    reganimate(drawings, variables);
 }
+
 
 /* Button function to execute the code */
 function execute(){
     var canvas = document.getElementById("reglettes");
     var context = canvas.getContext("2d");
+    var animation = document.getElementById("animation");
+    var context_animation = animation.getContext("2d");
     var variables = new Map ();
     variables.set("_canvas", canvas);
     variables.set("_context",context);
+    variables.set("_canvasanimation", animation);
+    variables.set("_contextanimation",context_animation);
     variables.set("_reg",[]);
     variables.set("_gexch",0);
     variables.set("_lexch",0);
-    // var variables = {"_canvast":canvas, "_context":context, "_reg":[], "_gexch":0};
     /* Empty the canvas for further drawings */
     context.clearRect(0,0,canvas.width,canvas.height);
     /* Get the code string */
