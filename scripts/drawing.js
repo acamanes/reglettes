@@ -13,6 +13,10 @@ function e_intialize () {alert("La création des réglettes doit intervenir à l
 
 /* Draw the array of reglettes */
 function draw(a, context, x, y) {
+    /* a : array
+       context : context canvas to draw inside
+       x : xshift
+       y : yshift */
     var pas = 1/a.length;
     for (var i=0; i < a.length; i++) {
 	context.fillStyle="hsl("+Math.round(300*a[i]*pas)+",100%,50%)";
@@ -24,6 +28,10 @@ function draw(a, context, x, y) {
 
 /* Draw the array of reglettes and the instruction */
 function draw_instruction(a, todo, exch, x, y, context) {
+    /* a : array
+       todo : instruction
+       exch : number of exchanges
+       x : xshif, y : yshift, context : canvas to draw inside */
     draw(a, context, x+100, y),
     context.fillText(todo,x,y);
     context.fillText(exch,x,y-10);
@@ -31,6 +39,8 @@ function draw_instruction(a, todo, exch, x, y, context) {
 
 /* Swaps elements indexed i and j of an array */
 function swap(a, i, j) {
+    /* a : array
+       i : int, j : int */
     var tmp = a[i];
     a[i] = a[j];
     a[j] = tmp;
@@ -38,6 +48,7 @@ function swap(a, i, j) {
     
 /* Shuffles array in place */
 function shuffle(variables) {
+    /* variables : dictionnary with key "_reg" : array */
     var a = variables.get("_reg");
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -48,6 +59,8 @@ function shuffle(variables) {
 
 /* Initialize the array in decrescent order */
 function initialize(n, variables) {
+    /* n : int 
+       variables : dictionnary with key "_reg" : array */
     var reg = [];
     for (i=1; i<=n; i++){
 	reg.push(n-i+1);
@@ -55,7 +68,7 @@ function initialize(n, variables) {
     variables.set("_reg", reg);
 }
 
-/* 1-step parallel Comb sort of length 1 starting from j */
+/* 1-step parallel 1-Comb sort starting from j */
 /* Returns the number of exchanges done */
 function partial_sort(variables, j) {
     var a = variables.get("_reg");
@@ -79,7 +92,6 @@ function partial_sort(variables, j) {
 /* Get, Read and evaluate program */
 /* Get the content of the code*/
 
-
 /* List of functions and instructions */
 var mfunctions = new Map ([
     ["initialize", initialize]])
@@ -92,7 +104,6 @@ var minstructions = new Map([
     ["sort_even", sort_even],
     ["sort_odd", sort_odd]])
 
-// var functions = "initialize"
 var instructions = /shuffle|sort_even|sort_odd/;
 
 /* Read the code, Parse it an returns a list of lists where each element is either
@@ -100,17 +111,16 @@ var instructions = /shuffle|sort_even|sort_odd/;
 /* ["i", instruction]
 /* ["r", int, [list]] to repeat n times the instructions contained in the list
 */
-
 function codetoinstructions(code){
     /* Take the code and returns 
        loops extended and the sequence of instructions */
     /* Puts { and } alone a line code */
-    code = code.replace("{","\n{\n");
-    code = code.replace("}","\n}\n");
+    var code = code.replace(/\{/g,"\n{\n");
+    var code = code.replace("}","\n}\n");
     /* Suppress empty lines */
-    code = code.replace(/\n{2,}/g,"\n");
+    var code = code.replace(/\n{2,}/g,"\n");
     /* Splits the code wrt line breaks */
-    codearray = code.split("\n");
+    var codearray = code.split("\n");
     /* Instructions list */
     var listeinstr = [];
     var i = 0;
@@ -122,50 +132,43 @@ function codetoinstructions(code){
 	    var strarray = str.split("(");
 	    var f = strarray[0];
 	    var argts = (strarray[1].split(")")[0]).split(",");
-	    listeinstr.push(["f", f, argts]);
-	}
+	    listeinstr.push(["f", f, argts]);}
 	/* Detects and parse instructions */
 	else if (str.match(instructions) != null){
-	    listeinstr.push(["i", str]);
-	}
+	    listeinstr.push(["i", str]);}
 	/* Detects and build loops */
 	else if (str.includes("repeat")) {
 	    var num = str.split(" ")[1];
 	    /* Detects the number of lines in the loop */
 	    var j = i + 1;
 	    if (codearray[j] == "{") {
-		while (codearray[j] != "}") {
-		    j++;
-		}
+		while (!(codearray[j].includes("}"))) {j++;}
 	    }
 	    /* Creates the corresponding code string */
 	    var codeloop = ((codearray.slice(i+2,j)).toString()).replace(/,/g,"\n");
 	    /* Recursive code to build the instructions list */
-	    instrloop = codetoinstructions(codeloop)
+	    var instrloop = codetoinstructions(codeloop);
 	    listeinstr.push(["r", num, instrloop]);
-	    var i = j;
-	}
+	    var i = j;}
 	/* Detects and build conditional loops */
 	else if (str.includes("while")) {
 	    /* Detects the number of lines in the loop */
-	    var j = i + 1;
-	    if (codearray[j] == "{") {
-		while (codearray[j] != "}") {
-		    j++;
-		}
-	    }
+	    var j = i+ 1;
+	    // if !(codearray[j].includes("{")) {
+	    while (!(codearray[j].includes("}"))) {j++;}
+	// }
 	    /* Creates the corresponding code string */
-	    var codeloop = ((codearray.slice(i+2,j)).toString()).replace(/,/g,"\n");
+	    var loop = codearray.slice(i+2,j);
+	    var codeloop = (loop.toString()).replace(/,/g,"\n");
 	    /* Recursive code to build the instructions list */
-	    instrloop = codetoinstructions(codeloop)
+	    var instrloop = codetoinstructions(codeloop);
 	    listeinstr.push(["w", instrloop]);
-	    var i = j;
-	}
+	    var i = j;}
 	/* If undefined command opens a popup alert */
-	else if (str == "") {} else {e_undefined();}
+	else if (str == "" || str == " ") {}
+	else {e_undefined();};
 	/* Next line of code */
-	i++
-    }
+	i++;}
     return listeinstr;
 }
 
@@ -203,7 +206,7 @@ function eval(code, variables){
 	    else if (todo[0] == "f") {
 		mfunctions.get(todo[1])(todo[2],variables);
 		    var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"line":i,"reg":reg.slice()});
+		drawings.push({"instr":todo[1],"line":i,"reg":reg.slice(),"exch":variables.get("_lexch")});
 	    }
 	    /* Loops use previous functions */
 	    else if (todo[0] == "r") {
@@ -225,10 +228,7 @@ function eval(code, variables){
 			drawings.push({"instr":todo[1][k][1],"line":i+k,"reg":reg.slice(),"exch":variables.get("_lexch")});
 		    }
 		    exch = exch - variables.get("_gexch");
-		}
-	    }
-
-	}}
+		}}}}
     return drawings
 }
 

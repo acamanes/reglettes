@@ -11,7 +11,11 @@
     <div>
       <h1 style="text-align:center" id="page-title">Trier des réglettes</h1>
     </div>
-    <table>
+<a href="./instructions.html"
+target="popup" 
+onclick="window.open('./instructions.html','popup','width=600,height=600'); return false;">
+Instructions
+</a>    <table>
       <col width="30%">
       <col width="30%">
       <col width="30%">
@@ -23,30 +27,20 @@
 	<td style="vertical-align:top">
 	  <button onclick="execute();">Évaluer</button>
 	  <br/>
-	  <textarea id="code" rows="20" placeholder="Write your code..."></textarea>
+	  <textarea id="code" rows="20" cols="25" placeholder="Write your code..."></textarea>
 	</td>
 	<td style="vertical-align:top">
 	  <button onclick="back();">Reculer</button>
 	  <button onclick="animation();">Animer</button>
 	  <button onclick="fwd();">Avancer</button>
 	  <br/>
-	  <canvas id="animation" width="100" height="1000">Votre animation ici</canvas>
+	  <canvas id="animation" width="100" height="1000"></canvas>
 	</td>
 	<td style="padding-left:100px">
 	  <canvas id="reglettes" width="100" height="1000"></canvas>
 	</td>
       </tr>
     </table>
-	  Commandes autorisées
-	  <ul>
-	    <li>Une commande par ligne</li>
-	    <li>initialize(??) : Crée ?? réglettes triées par ordre décroissant de taille.</li>
-	    <li>shuffle : Mélange les réglettes.</li>
-	    <li>sort_even : Ordonne les réglettes dont la position est paire avec leur voisine de droite.</li>
-	    <li>sort_odd : Ordonne les réglettes dont la position est impaire avec leur voisine de droite.</li>
-	    <li>repeat ?? times {...} : Répète une série d'actions ?? fois.</li>
-	    <li>while exists_exchanges {...} : Répète une série d'actions ?? tant que des échanges ont été effectués dans la boucle.</li>
-	  </ul>
     <script src="scripts/drawing.js"></script>
   </body>
 </html>
