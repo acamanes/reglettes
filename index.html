@@ -24,15 +24,27 @@ Instructions
 	<th>Déroulé</th>
       </tr>
       <tr>
-	<td style="vertical-align:top">
+	<td style="vertical-align:top; text-align:center;">
 	  <button onclick="execute();">Évaluer</button>
 	  <br/>
 	  <textarea id="code" rows="20" cols="25" placeholder="Write your code..."></textarea>
 	</td>
-	<td style="vertical-align:top">
-	  <button onclick="back();">Reculer</button>
-	  <button onclick="animation();">Animer</button>
-	  <button onclick="fwd();">Avancer</button>
+	<td style="vertical-align:top; text-align:center;">
+	  <button id="back" onclick="back();">Reculer</button>
+	  <script type="text/javascript">
+	    var buttons = document.getElementById("back");
+	    buttons.innerHTML = '<img style="width:30px" src="images/bwd.svg" />';
+	  </script>
+	  <button id="play" onclick="animation();">Animer</button>
+	  <script type="text/javascript">
+	    var buttons = document.getElementById("play");
+	    buttons.innerHTML = '<img style="width:40px" src="images/play.png" />';
+	  </script>
+	  <button id="forward" onclick="fwd();">Avancer</button>
+	  <script type="text/javascript">
+	    var buttons = document.getElementById("forward");
+	    buttons.innerHTML = '<img style="width:30px" src="images/fwd.svg" />';
+	  </script>
 	  <br/>
 	  <canvas id="animation" width="100" height="1000"></canvas>
 	</td>

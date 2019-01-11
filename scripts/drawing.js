@@ -8,9 +8,11 @@
 /* "_lexch" : local number of exchanges */
 
 /* Alert messages */
-function e_undefined () {alert("La commande n'existe pas");}
-function e_intialize () {alert("La création des réglettes doit intervenir à la première ligne de code, et uniquement à cette ligne");}
-
+function e_undefined () {alert("Je dois pouvoir comprendre toutes les commandes que tu utilises.");}
+function e_intialize () {alert("Tu dois commencer ton code en me donnant le nombre de réglettes que tu veux que j'utilise.");}
+function e_toolarge () {alert("Tu prévois un peu trop de réglettes. Personnellement, cela ne me pose aucun problème de calcul. Cependant, en tant qu'être humain, tu ne pourras pas bien visualiser ce que je fais.");}
+function e_loop () {alert("Visiblement, la boucle while que tu as écrite ne termine pas. Tu dois avoir oublié des instructions nécessaires au tri de la liste.");}
+    
 /* Draw the array of reglettes */
 function draw(a, context, x, y) {
     /* a : array
@@ -119,6 +121,8 @@ function codetoinstructions(code){
     var code = code.replace("}","\n}\n");
     /* Suppress empty lines */
     var code = code.replace(/\n{2,}/g,"\n");
+    /* Suppress case sensitivity */
+    var code = code.toLowerCase();
     /* Splits the code wrt line breaks */
     var codearray = code.split("\n");
     /* Instructions list */
@@ -192,7 +196,8 @@ function eval(code, variables){
     /* Gets the parsed code and the number of instructions */
     var drawings = []
     var listinstr = codetoinstructions(code);
-    if (listinstr[0][1] != "initialize") {e_intialize() }
+    if (listinstr[0][1] != "initialize") {e_intialize()}
+    else if (listinstr[0][2] > 50) {e_toolarge();}
     else {
 	for (var i=0; i<listinstr.length;i++) {
 	    var todo = listinstr[i]
@@ -218,17 +223,20 @@ function eval(code, variables){
 		    }}}
 	    /* Conditional loops use previous functions */
 	    else if (todo[0] == "w") {
-		var j = 0;
 		var exch = 1;
+		var cpt = 0;
 		while (exch != 0) {
+		    cpt++;
+		    if (cpt == 50) {e_loop();break;}
+		    else{
 		    exch = variables.get("_gexch");
 		    for (var k=0; k<todo[1].length;k++) {
 			eval_simple(todo[1][k], variables);
 			var reg = variables.get("_reg");
-			drawings.push({"instr":todo[1][k][1],"line":i+k,"reg":reg.slice(),"exch":variables.get("_lexch")});
-		    }
-		    exch = exch - variables.get("_gexch");
-		}}}}
+			drawings.push({"instr":todo[1][k][1],"line":i+k,"reg":reg.slice(),"exch":variables.get("_lexch")});}
+			exch = exch - variables.get("_gexch");}
+		}
+	    }}}
     return drawings
 }
 
@@ -294,8 +302,8 @@ function print (code, variables) {
 function execute (){
     var canvas = document.getElementById("reglettes");
     var context = canvas.getContext("2d");
-    var animation = document.getElementById("animation");
-    var context_animation = animation.getContext("2d");
+    var canvas_animation = document.getElementById("animation");
+    var context_animation = canvas_animation.getContext("2d");
     var variables = new Map ();
     variables.set("_canvas", canvas);
     variables.set("_context",context);
@@ -306,6 +314,7 @@ function execute (){
     variables.set("_lexch",0);
     /* Empty the canvas for further drawings */
     context.clearRect(0,0,canvas.width,canvas.height);
+    context_animation.clearRect(0,0,canvas_animation.width,canvas_animation.height);
     /* Get the code string */
     var code = document.getElementById("code").value;
     /* Evaluates */
