@@ -2,59 +2,72 @@
 
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title style="text-align:center">Atelier de tri</title>
+    <link rel="stylesheet" href="style.css">
     <script src="scripts/main.js"></script>
     <script src="scripts/parallel_comb_sort.js"></script>
     <meta charset="utf-8" />
   </head>
   
   <body>
-    
-    <div>
-      <h1 style="text-align:center" id="page-title">Trier des réglettes</h1>
+
+    <!-- Title -->
+    <div class="header">
+      <h1>Trier des réglettes</h1>
     </div>
-<a href="./instructions.html"
-target="popup" 
-onclick="window.open('./instructions.html','popup','width=600,height=600'); return false;">
-Instructions
-</a>    <table>
-      <col width="30%">
-      <col width="30%">
-      <col width="30%">
-      <tr><th>Code</th>
-	<th>Animation</th>
-	<th>Déroulé</th>
-      </tr>
-      <tr>
-	<td style="vertical-align:top; text-align:center;">
-	  <button onclick="execute();">Évaluer</button>
-	  <br/>
-	  <textarea id="code" rows="20" cols="25" placeholder="Write your code..."></textarea>
-	</td>
-	<td style="vertical-align:top; text-align:center;">
-	  <button id="back" onclick="back();">Reculer</button>
-	  <script type="text/javascript">
-	    var buttons = document.getElementById("back");
-	    buttons.innerHTML = '<img style="width:30px" src="images/bwd.svg" />';
-	  </script>
-	  <button id="play" onclick="animation();">Animer</button>
-	  <script type="text/javascript">
-	    var buttons = document.getElementById("play");
-	    buttons.innerHTML = '<img style="width:40px" src="images/play.png" />';
-	  </script>
-	  <button id="forward" onclick="fwd();">Avancer</button>
-	  <script type="text/javascript">
-	    var buttons = document.getElementById("forward");
-	    buttons.innerHTML = '<img style="width:30px" src="images/fwd.svg" />';
-	  </script>
-	  <br/>
-	  <canvas id="animation" width="100" height="1000"></canvas>
-	</td>
-	<td style="padding-left:100px">
-	  <canvas id="reglettes" width="100" height="1000"></canvas>
-	</td>
-      </tr>
-    </table>
+
+    <!-- Link to get instructions -->
+    <div class="instructions">
+    <a href="./instructions.html"
+       target="popup" 
+       onclick="window.open('./instructions.html','popup',
+		'width=600,height=600'); return false;">
+      Instructions
+    </a>
+    </div>
+
+    <!-- Columns -->
+    <div class="container">
+    <div class="row">
+      <div class="col-1">
+	<!-- Column containing the code -->
+	<button onclick="execute();">Évaluer</button>
+	<br/>
+	<textarea id="code" style="width:75%" rows="20"
+		  placeholder="Write your code..."></textarea>
+      </div>
+
+      <!-- Column containing the animation -->
+      <div class="col-2">
+	<!-- Back button -->
+	<button id="back" type="submit" onclick="back();">
+	  <img style="width:30px" src = "images/bwd.svg"/>
+	  <!-- Reculer -->
+	</button>
+	
+	<!-- Play button -->
+	<button id="play" type="submit" onclick="animation();">
+	  <img style="width:30px" src = "images/play.png"/>
+	  <!-- Animer -->
+	</button>
+
+	<!-- Forward button -->
+	<button id="forward" type="submit" onclick="fwd();">
+	  <img style="width:30px" src = "images/fwd.svg"/>
+	  <!-- Avancer -->
+	</button>
+	
+	<!-- Canvas containig animation -->
+	<br/>
+	<canvas id="animation" width="80%" height="1000px"></canvas>
+      </div>
+
+<div class="col-3">
+  <canvas id="reglettes" width="80%" height="1000px"></canvas>
+</div>
     <script src="scripts/drawing.js"></script>
+    </div>
+    </div>
   </body>
 </html>

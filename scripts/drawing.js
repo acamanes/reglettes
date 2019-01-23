@@ -21,6 +21,7 @@ function print (code, variables) {
     var context = variables.get("_context");
     drawings = eval(code,variables);
     var number = (drawings[0].reg).length;
+    var ys = 10*number+100
     var h = 10 * number + 20;
     var lcode = drawings.length;
     /* Modify canvas size */
@@ -36,10 +37,11 @@ function print (code, variables) {
     draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
         /* Get the code string */
     var code = document.getElementById("code").value;
-    var codearray = codetoarray(code);
-    for (var j=0;j<codearray.length;j++) {
-	acontext.fillText(codearray[j],0,10*number+100+10*j);
-    }
+    codearray = codetoarray(code);
+    print_code(codearray, [0], acontext, xshift=0, yshift=ys)
+    // for (var j=0;j<codearray.length;j++) {
+	// acontext.fillText(codearray[j],0,10*number+100+10*j);
+    // }
     // draw(a,acontext,100,10*number);
     history(drawings, variables);
     var acanvas = document.getElementById("animation");
@@ -75,11 +77,13 @@ function back () {
     var acanvas = document.getElementById("animation");
     var acontext = acanvas.getContext("2d");
     var number = (drawings[0].reg).length;
+    var ys = 10*number+100;
     if (position == 0) {alert("Début atteint")}
     else
     {var a = drawings[position-1];
      acontext.clearRect(0,0,acanvas.width,acanvas.height);
-    draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+     draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+     print_code(codearray, [a.line], acontext, xshift=0, yshift=ys);
      window.position = window.position-1;}
 }
 
@@ -87,11 +91,13 @@ function fwd () {
     var acanvas = document.getElementById("animation");
     var acontext = acanvas.getContext("2d");
     var number = (drawings[0].reg).length;
+    var ys = 10*number+100
     if (position == drawings.length-1) {alert("Fin atteinte")}
     else
     {var a = drawings[position+1];
      acontext.clearRect(0,0,acanvas.width,acanvas.height);
      draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+     print_code(codearray, [a.line], acontext, xshift=0, yshift=ys);
      window.position = window.position+1;}
 }
 
@@ -110,25 +116,17 @@ function reganimate (drawings, acanvas, acontext){
     var id = setInterval(frame,1000);
     var number = (drawings[0].reg).length;
     var pas = 1/number;
+    var ys = 10 * number + 100;
     /* Get the code string */
     var code = document.getElementById("code").value;
     var codearray = codetoarray(code);
-    for (var j=0;j<codearray.length;j++) {
-	if (j == 0) {acontext.fillStyle="red";}
-	acontext.fillText(codearray[j],0,10*number+100+10*j);
-	acontext.fillStyle="black";
-    }
+    print_code(codearray, [i], acontext, xshift=0, yshift=ys)
     function frame () {
 	if (i==max-1) {clearInterval(id)}
 	else {i++;
 	      acontext.clearRect(0,0,acanvas.width,acanvas.height);
 	      var a = drawings[i];
-	      for (var j=0;j<codearray.length;j++) {
-		  if (j == a.line) {acontext.fillStyle="red";}
-		  acontext.fillText(codearray[j],0,10*number+100+10*j);
-		  acontext.fillStyle="black";
-		  
-	      }
+	      print_code(codearray, [a.line], acontext, xshift=0, yshift=ys)
 	      draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
 	     }
     }
