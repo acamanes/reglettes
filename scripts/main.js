@@ -5,8 +5,8 @@
 /* "_canvas" : name of the canvas */
 /* "_context" : context of the canvas */
 /* "_reg" : name of the tabular */
-/* "_gexch" : total number of exchanges */
-/* "_lexch" : local number of exchanges */
+/* "_gexch" : total number of swaps */
+/* "_lexch" : local number of swaps */
 
 
 /** Reglettes **/
@@ -108,7 +108,8 @@ function codetoinstructions(codearray){
 		j++;}
 	    /* Recursive code to build the instructions list */
 	    var instrloop = codetoinstructions(codearray.slice(i+2,j-1));
-	    var cond = "";
+	    var cond = str.split(" ")[1];
+	    console.log(cond);
 	    listeinstr.push(["w", cond, instrloop]);
 	    var i = j-1;}
 	/* If undefined command opens a popup alert */
@@ -184,7 +185,8 @@ function eval(code, variables){
 		    cpt++;
 		    if (cpt == 50) {e_loop();break;}
 		    else{
-		    var exch = variables.get("_gexch");
+			if (todo[1] == "exists_swap") {var exch = variables.get("_gexch");}
+			else {var exch = variables.get("_indices").length;}
 		    for (var k=0; k<todo[2].length;k++) {
 			// eval(todo, variables);
 			eval_simple(todo[2][k], variables);
@@ -193,7 +195,9 @@ function eval(code, variables){
 		    	var code_line = code_line+1;
 		    }
 			var code_line = code_line - todo[2].length;
-			var exch = exch - variables.get("_gexch");
+			if (todo[1] == "exists_swap") {
+			    var exch = exch - variables.get("_gexch");}
+			else {var exch = exch - variables.get("_indices").length;}
 		    }
 		}
 		var code_line = code_line + todo[2].length + 1;
@@ -268,7 +272,7 @@ function draw_instruction(drawings, x, y, context) {
     ind = drawings.split;
     /* a : array
        todo : instruction
-       exch : number of exchanges
+       exch : number of swaps
        x : xshif, y : yshift, context : canvas to draw inside */
     draw(a, ind, context, x+100, y);
     context.fillText(todo,x,y);
