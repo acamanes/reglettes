@@ -10,9 +10,9 @@ function history(drawings, variables) {
     /* Height of 1 drawing instruction */
     var h = 10 * number + 20;
     for (i=0;i<drawings.length;i++){
-	draw_instruction(drawings[i].reg,drawings[i].instr,drawings[i].exch,0,h*(i+1), context);
+	draw_instruction(drawings[i],0,h*(i+1), context);
     }
-    context.fillText("Nombre total d'échanges : "+variables.get("_gexch"),0,10);
+    context.fillText("Nombre total de comparaisons : "+variables.get("_gcomp"),0,10);
 }
 
 function print (code, variables) {
@@ -34,7 +34,7 @@ function print (code, variables) {
     window.position = 0;
     var a = drawings[0];
     // acontext.clearRect(0,0,acanvas.width,acanvas.height);
-    draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+    draw_instruction(a,0,10*number+50, acontext);
         /* Get the code string */
     var code = document.getElementById("code").value;
     codearray = codetoarray(code);
@@ -62,6 +62,9 @@ function execute (){
     variables.set("_reg",[]);
     variables.set("_gexch",0);
     variables.set("_lexch",0);
+    variables.set("_gcomp",0);
+    variables.set("_lcomp",0);
+    variables.set("_indices",[]);
     /* Empty the canvas for further drawings */
     context.clearRect(0,0,canvas.width,canvas.height);
     context_animation.clearRect(0,0,canvas_animation.width,canvas_animation.height);
@@ -82,7 +85,7 @@ function back () {
     else
     {var a = drawings[position-1];
      acontext.clearRect(0,0,acanvas.width,acanvas.height);
-     draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+     draw_instruction(a,0,10*number+50, acontext);
      print_code(codearray, [a.line], acontext, xshift=0, yshift=ys);
      window.position = window.position-1;}
 }
@@ -96,7 +99,7 @@ function fwd () {
     else
     {var a = drawings[position+1];
      acontext.clearRect(0,0,acanvas.width,acanvas.height);
-     draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+     draw_instruction(a,0,10*number+50, acontext);
      print_code(codearray, [a.line], acontext, xshift=0, yshift=ys);
      window.position = window.position+1;}
 }
@@ -127,7 +130,7 @@ function reganimate (drawings, acanvas, acontext){
 	      acontext.clearRect(0,0,acanvas.width,acanvas.height);
 	      var a = drawings[i];
 	      print_code(codearray, [a.line], acontext, xshift=0, yshift=ys)
-	      draw_instruction(a.reg,a.instr,a.exch,0,10*number+50, acontext);
+	      draw_instruction(a,0,10*number+50, acontext);
 	     }
     }
 }

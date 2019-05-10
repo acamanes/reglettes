@@ -30,6 +30,8 @@ function shuffle(variables) {
         j = Math.floor(Math.random() * (i + 1));
 	swap(a, i, j);
     }
+    variables.set("_lcomp",0);
+    variables.set("_lexch",0);
 }
 
 /* Swaps elements indexed i and j of an array */
@@ -106,7 +108,8 @@ function codetoinstructions(codearray){
 		j++;}
 	    /* Recursive code to build the instructions list */
 	    var instrloop = codetoinstructions(codearray.slice(i+2,j-1));
-	    listeinstr.push(["w", instrloop]);
+	    var cond = "";
+	    listeinstr.push(["w", cond, instrloop]);
 	    var i = j-1;}
 	/* If undefined command opens a popup alert */
 	else if (str == "" || str == " ") {}
@@ -147,14 +150,14 @@ function eval(code, variables){
 	    if (todo[0] == "i") {
 		minstructions.get(todo[1])(variables);
 		var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch")});
+		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 		code_line ++;
 	    }
 	    /* Functions take arguments and context */
 	    else if (todo[0] == "f") {
 		mfunctions.get(todo[1])(todo[2],variables);
 		    var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch")});
+		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 		code_line++;
 	    }
 	    /* Loops use previous functions */
@@ -165,7 +168,7 @@ function eval(code, variables){
 			// eval(todo, variables);
 			eval_simple(todo[2][k], variables);
 			var reg = variables.get("_reg");
-			drawings.push({"instr":todo[2][k][1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch")});
+			drawings.push({"instr":todo[2][k][1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 			var code_line = code_line+1;
 		    }
 		    var code_line = code_line - todo[2].length;
@@ -182,25 +185,36 @@ function eval(code, variables){
 		    if (cpt == 50) {e_loop();break;}
 		    else{
 		    var exch = variables.get("_gexch");
-		    for (var k=0; k<todo[1].length;k++) {
+		    for (var k=0; k<todo[2].length;k++) {
 			// eval(todo, variables);
-			eval_simple(todo[1][k], variables);
+			eval_simple(todo[2][k], variables);
 			var reg = variables.get("_reg");
-			drawings.push({"instr":todo[1][k][1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch")});
+			drawings.push({"instr":todo[2][k][1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 		    	var code_line = code_line+1;
 		    }
-			var code_line = code_line - todo[1].length;
+			var code_line = code_line - todo[2].length;
 			var exch = exch - variables.get("_gexch");
 		    }
 		}
-		var code_line = code_line + todo[1].length + 1;
+		var code_line = code_line + todo[2].length + 1;
 	    }}}
     return drawings
 }
 
 /** Drawing **/
+function triangle(x, y, length, context) {
+    context.beginPath();
+    var height = length * Math.sqrt(3)/2;
+    context.moveTo(x, y);
+    context.lineTo(x+length, y);
+    context.lineTo(x+length/2, y-height);
+    context.lineTo(x, y);
+    context.closePath();
+    context.fill();
+}
+
 /* Draw the array of reglettes */
-function draw(a, context, x, y) {
+function draw(a, ind, context, x, y) {
     /* a : array
        context : context canvas to draw inside
        x : xshift
@@ -212,19 +226,53 @@ function draw(a, context, x, y) {
 	context.fillStyle="hsl("+Math.round(300*a[i]*pas)+",100%,50%)";
 	context.fillRect(2*larg_reg*i+x, y, larg_reg, -a[i]*10);
 	context.fillStyle="black";
-	context.fillText(i, 2*larg_reg*i+x+4, y+10);
+	/* draw vertical lines if needed */
+	if (ind.includes(i)) {context.fillRect(2*larg_reg*(i-0.3)+x, y, 0.1 * larg_reg, -a.length*10);}
+	/* Draw triangles and squares */
+	if (i % 2 != 0) {
+	    context.fillRect(2*larg_reg*i+x,y+10,larg_reg,larg_reg);}
+	else {
+	    triangle(2*larg_reg*i+x, y+10, larg_reg, context);}
+	    // context.fillRect(2*larg_reg*i+x,y+5,larg_reg,larg_reg);}
+	// context.fillText(i, 2*larg_reg*(i-0.25)+x+4, y+10);
     }
 }
 
+function draw_sep(a, indices, context, x, y) {
+    /* a : array
+       context : context canvas to draw inside
+       x : xshift
+       y : yshift */
+    var larg = context.canvas.width;
+    var larg_reg = larg/(5*a.length);
+    var pas = 1/a.length;
+    for (var i=0; i < a.length; i++) {
+	context.fillStyle="hsl("+Math.round(300*a[i]*pas)+",100%,50%)";
+	context.fillRect(2*larg_reg*i+x, y, larg_reg, -a[i]*10);
+	context.fillStyle="black";
+	if (i % 2 != 0) {
+	    context.fillRect(2*larg_reg*i+x,y+10,larg_reg,larg_reg);}
+	else {
+	    triangle(2*larg_reg*i+x, y+10, larg_reg, context);}
+	    // context.fillRect(2*larg_reg*i+x,y+5,larg_reg,larg_reg);}
+	// context.fillText(i, 2*larg_reg*(i-0.25)+x+4, y+10);
+    }
+}
+
+
 /* Draw the array of reglettes and the instruction */
-function draw_instruction(a, todo, exch, x, y, context) {
+function draw_instruction(drawings, x, y, context) {
+    a = drawings.reg;
+    todo = drawings.instr;
+    comp = drawings.comp;
+    ind = drawings.split;
     /* a : array
        todo : instruction
        exch : number of exchanges
        x : xshif, y : yshift, context : canvas to draw inside */
-    draw(a, context, x+100, y),
+    draw(a, ind, context, x+100, y);
     context.fillText(todo,x,y);
-    context.fillText(exch,x,y-10);
+    context.fillText(comp,x,y-10);
 }
 
 function print_code (codearray, lines, acontext, xshift=0, yshift=0) {
@@ -240,3 +288,15 @@ function e_undefined () {alert("Je dois pouvoir comprendre toutes les commandes 
 function e_intialize () {alert("Tu dois commencer ton code en me donnant le nombre de réglettes que tu veux que j'utilise.");}
 function e_toolarge () {alert("Tu prévois un peu trop de réglettes. Personnellement, cela ne me pose aucun problème de calcul. Cependant, en tant qu'être humain, tu ne pourras pas bien visualiser ce que je fais.");}
 function e_loop () {alert("Visiblement, la boucle while que tu as écrite ne termine pas. Tu dois avoir oublié des instructions nécessaires au tri de la liste.");}
+
+/** Commandes elementaires **/
+/* List of functions and instructions */
+var mfunctions = new Map ([
+    ["initialize", initialize],
+]);
+
+var minstructions = new Map([
+    ["shuffle", shuffle],
+]);
+
+var instructions = /shuffle|/;
