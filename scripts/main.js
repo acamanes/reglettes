@@ -82,7 +82,7 @@ function codetoinstructions(codearray){
 	else if (str.match(instructions) != null){
 	    listeinstr.push(["i", str]);}
 	/* Detects and build loops */
-	else if (str.includes("repeat")) {
+	else if (str.includes("do")) {
 	    var num = str.split(" ")[1];
 	    /* Detects the number of lines in the loop */
 	    var j = i + 2;
@@ -126,7 +126,7 @@ function eval_simple(todo,variables) {
     var a = variables.get("_reg");
     /* The instructions cases */
     if (todo[0] == "i") {
-	minstructions.get(todo[1])(variables);
+	minstructions.get(todo[1].trim())(variables);
     }
     /* The functions cases */
     else if (todo[0] == "f") {
@@ -143,22 +143,22 @@ function eval(code, variables){
     var codearray = codetoarray(code);
     var listinstr = codetoinstructions(codearray);
     if (listinstr[0][1] != "initialize") {e_intialize()}
-    else if (listinstr[0][2] > 50) {e_toolarge();}
+    else if (listinstr[0][2] > 100) {e_toolarge();}
     else {
 	for (var i=0; i<listinstr.length;i++) {
 	    var todo = listinstr[i]
 	    /* Only argument of instructions is context */
 	    if (todo[0] == "i") {
-		minstructions.get(todo[1])(variables);
+		minstructions.get(todo[1].trim())(variables);
 		var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
+		drawings.push({"instr":todo[1].trim(),"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 		code_line ++;
 	    }
 	    /* Functions take arguments and context */
 	    else if (todo[0] == "f") {
-		mfunctions.get(todo[1])(todo[2],variables);
+		mfunctions.get(todo[1].trim())(todo[2],variables);
 		    var reg = variables.get("_reg");
-		drawings.push({"instr":todo[1],"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
+		drawings.push({"instr":todo[1].trim(),"line":code_line,"reg":reg.slice(),"exch":variables.get("_lexch"),"comp":variables.get("_lcomp"),"split":variables.get("_indices")});
 		code_line++;
 	    }
 	    /* Loops use previous functions */

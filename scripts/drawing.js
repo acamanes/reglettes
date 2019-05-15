@@ -116,7 +116,7 @@ function reganimate (drawings, acanvas, acontext){
     /* */
     var i = 0;
     var max = drawings.length;
-    var id = setInterval(frame,1000);
+    var id = setInterval(frame,500);
     var number = (drawings[0].reg).length;
     var pas = 1/number;
     var ys = 10 * number + 100;
